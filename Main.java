@@ -10,58 +10,60 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         URL url = null;
-        String urlString = "https://api.chucknorris.io/jokes/random";
-        try{
-            url = new URL(urlString);
-        }catch(MalformedURLException e){
-System.out.println("Problem in url");
+        String urlstring = "https://api.zippopotam.us/us/33162";
+        try {
+            url = new URL(urlstring);
+        } catch (MalformedURLException e) {
+            System.out.println("Problem in url");
         }
 
-        HttpURLConnection connection = null;
-        int responseCode = 0;
-try{
-connection =(HttpURLConnection)url.openConnection();
-responseCode =connection.getResponseCode();
-}catch(Exception e){
-System.out.println("Connection Problem");
-}
-//extract information from the connection object
+        //connection
 
-        if(responseCode==200){
-            BufferedReader in = null;
-            try {
-                in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+        HttpURLConnection connection = null;
+        int responsecode = 0;
+        try {
+            connection =(HttpURLConnection) url.openConnection();
+            responsecode = connection.getResponseCode();
+        } catch (Exception e) {
+            System.out.println("Connection problem");
+        }
+
+        //extract information from the connection object
+
+        if(responsecode==200){
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             StringBuilder api = new StringBuilder();
             String readLine = null;
 
-            while(true){
-                try {
-                    if (!((readLine = in.readLine())!=null)) break;
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+            while((readLine = in.readLine())!=null){
                 api.append(readLine);
-            }try{
+            }
+            try {
                 in.close();
-            }catch(IOException e){
-throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
             JSONObject jsonAPIresponse = new JSONObject(api.toString());
-            System.out.println(jsonAPIresponse.get("categories"));
-            System.out.println(jsonAPIresponse.get("created_at"));
-            System.out.println(jsonAPIresponse.get("icon_url"));
-            System.out.println(jsonAPIresponse.get("id"));
-            System.out.println(jsonAPIresponse.get("updated_at"));
-            System.out.println(jsonAPIresponse.get("url"));
-            System.out.println(jsonAPIresponse.get("value"));
+
+           String s2 = jsonAPIresponse.get("places").toString();
+
+           String ss = s2.substring(1,s2.length()-1);
+
+            JSONObject jsonAPIresponse1 = new JSONObject(ss);
+            System.out.println(jsonAPIresponse.get("post code"));
+            System.out.println(jsonAPIresponse.get("country"));
+            System.out.println(jsonAPIresponse.get("country abbreviation"));
+            String []arr = ss.split(",");
+            for(String x : arr){
+                System.out.println(x);
+            }
+
         }else{
-            System.out.println("API call could not be made");
+            System.out.println("API call could not be made!!");
         }
+
     }
 }
